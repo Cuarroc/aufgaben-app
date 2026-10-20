@@ -1,6 +1,6 @@
 # PROJECTA_ABNAHME: REF-APP-1 (in progress, not final)
 
-- **Status:** working draft. Last updated 2026-10-20T19:30Z by Root. Nothing in this file is an acceptance yet.
+- **Status:** working draft. Last updated 2026-10-20T19:46Z by Root. Nothing in this file is an acceptance yet.
 - **Target:** `ProjectA_Neustart_FINAL.md` (2026-10-20), refined by the follow-up instruction of 2026-10-20 ("Präzisierung des laufenden Auftrags").
 
 ## 0. Two separate closing statements (both still open)
@@ -33,7 +33,9 @@ Criteria A1–A12 come from `docs/ABNAHMEVERTRAG.md`. All are open. Each row wil
 |---|---|---|---|---|---|
 | P1 | The ProjectA codex worker does nothing for 10+ min. The card says "vermutlich festgefahren". | Observed: the Codex 0.162.1 start dialog "Hooks need review", caused by the user's full `~/.codex` configuration (`docs/nachweise/haenger-analyse.md`). | Chose "continue without trusting" → Codex exited with "config/read failed in TUI". | Configuration only, not a ProjectA commit: `agents.json` next to the Dev exe gives the codex profile `CODEX_HOME` = the slim worker home | S1 re-queued at 19:19Z; result open |
 | P2 | ProjectA reports "task written and echoed; agent output observed" although the text only reached the dialog. | ProjectA defect: the submit guard does not recognise the hooks dialog as a blocker (hypothesis: a new dialog variant in the known NT-17 startup chain). | – | open (planned: red-first fix in ProjectA) | open |
-| P3 | Task text loses newlines and `→`; the visible draft ends early. | open (hypothesis: the PTY write path normalises text, or the terminal only shows part of it) | – | Workaround, not a fix: a short task that points to a brief file in the repo | open |
+| P3 | Task text loses newlines and `→`; the visible draft ends early. | Confirmed 19:42Z (attempt 4): the unsent composer text ended mid-sentence ("…pusht den Branch und oeffnet den"), so the tail is really lost, not just hidden. Cause still open (PTY write path). | – | Workaround, not a fix: a short task that points to a brief file in the repo | open |
+| P5 | Codex "Update available" dialog at worker start; the submit guard typed the task + Enter into it → "Update now" → global `npm install -g @openai/codex` (0.162.1 → 0.163.0). | ProjectA defect, same class as P2: the guard does not know this startup modal and presses Enter blindly. | – | Config workaround: `check_for_update_on_startup = false` in the worker home. ProjectA fix: package PA-HOOKS-1 (red-first, tier A), in progress. Elias approved the update afterwards. | open |
+| P6 | Attempt 4: Codex 0.163 opens the "/hooks" panel, "3 hooks need review" (ponytail plugin: SessionStart, UserPromptSubmit, SubagentStart); the worker idles 10+ min. | Observed: Codex 0.163 runs plugin hooks and asks for trust (0.160/0.161 did not). Plugin installed in the worker home on Elias's order (13.10.). | – | Root chose "trust all" in the panel (worker-home config), then sent the stuck task by hand (external intervention). | Next fresh worker start (S2) must start without any dialog |
 | P4 | `pa project create` is refused: "registering a project is a human decision" | Intended (`decisions.md:650`, verdict-token gate) | – | No fix. Elias registered the project in the window. Listed as a necessary human step. | – |
 
 ## 3a. Before/after: ProjectA
