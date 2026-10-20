@@ -26,3 +26,6 @@ Each line: UTC time | actor | where (ProjectA / outside) | action | result.
 2026-10-20T19:43Z | Root | ProjectA Dev window (keyboard) | pressed Enter to submit the truncated task (external intervention; the brief-file reference was complete) | done
 2026-10-20T19:43:54Z | ProjectA worker wk-1a15aca65e8-22 | ProjectA | worker working: read ponytail + unlazy skills, read s1-durchstich.md, ABNAHMEVERTRAG.md, AGENTS.md; states "commit locally, no push, no gh" | running
 2026-10-20T19:44Z | Root | AgentsRoom agents_list_live | Stabschef (agent-1791039891183-on8l6v) status "failed", dispatch message unread; Root takes over dispatch as deputy (AGENTS.md: Chief unavailable -> Root) | handed back to Root
+2026-10-20T20:06Z | Codex CLI (outside ProjectA) | ProjectA repo | PA-HOOKS-1 draft PR #1753, head 4d24b7bc (ls-remote verified), prepush exit 0 (worker report: 2320 Rust tests passed, 20 skipped), 272 diff lines, red-first commit 40081b20 | draft
+2026-10-20T20:10Z | Root | outside | tier-A reviews of #1753 started: Kimi K3 (Moonshot) + Claude subagent (Anthropic), both non-author families (author OpenAI); brief pa-orch/reviews/pr1753-brief.md | running
+2026-10-20T20:08Z | ProjectA worker wk-1a15aca65e8-22 | ProjectA | observed in window: npm test green, npm run build green, 5 Rust acceptance tests green; `npm run tauri build` (NSIS) running ~23 min | running
