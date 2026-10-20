@@ -157,9 +157,13 @@ fn save_to_path_with(
         .map_err(|error| {
             format!("Die temporäre Datendatei konnte nicht geschrieben werden: {error}")
         })?;
-    write_temp(&mut file, &bytes).map_err(|error| {
-        format!("Die temporäre Datendatei konnte nicht gespeichert werden: {error}")
-    })?;
+    if let Err(error) = write_temp(&mut file, &bytes) {
+        drop(file);
+        let _ = fs::remove_file(&temp);
+        return Err(format!(
+            "Die temporäre Datendatei konnte nicht gespeichert werden: {error}"
+        ));
+    }
     drop(file);
 
     replace(&temp, path, &backup).map_err(|error| {
