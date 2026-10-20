@@ -90,12 +90,35 @@ fn validate(data: &AppData) -> Result<(), String> {
 }
 
 fn load_from_path(path: &Path) -> Result<AppData, String> {
-    if !path.exists() {
-        return Ok(AppData::default());
-    }
+    let mut file = match File::open(path) {
+        Ok(file) => file,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            for remainder in [
+                path.with_file_name("daten.bak.json"),
+                path.with_file_name("daten.json.tmp"),
+            ] {
+                match File::open(&remainder) {
+                    Ok(_) => return Err(format!(
+                        "daten.json fehlt, aber {} ist noch vorhanden. Die Datei wurde nicht verändert.",
+                        remainder.file_name().unwrap_or_default().to_string_lossy()
+                    )),
+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                    Err(error) => return Err(format!(
+                        "{} konnte nicht geprüft werden: {error}",
+                        remainder.file_name().unwrap_or_default().to_string_lossy()
+                    )),
+                }
+            }
+            return Ok(AppData::default());
+        }
+        Err(error) => {
+            return Err(format!(
+                "Die Datei daten.json konnte nicht gelesen werden: {error}"
+            ))
+        }
+    };
     let mut bytes = Vec::new();
-    File::open(path)
-        .and_then(|mut file| file.read_to_end(&mut bytes))
+    file.read_to_end(&mut bytes)
         .map_err(|error| format!("Die Datendatei konnte nicht gelesen werden: {error}"))?;
     let data: AppData = serde_json::from_slice(&bytes)
         .map_err(|error| format!("Die Datendatei ist beschädigt: {error}"))?;
@@ -138,6 +161,11 @@ fn save_to_path(path: &Path, data: &AppData) -> Result<(), String> {
 }
 
 fn cleanup_temp_after_replace_error(temp: &Path, error: &std::io::Error) {
+    #[cfg(windows)]
+    if error.raw_os_error() == Some(1177) {
+        return;
+    }
+    #[cfg(not(windows))]
     let _ = error;
     let _ = fs::remove_file(temp);
 }
