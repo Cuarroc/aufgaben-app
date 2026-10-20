@@ -29,7 +29,7 @@ export function TaskForm({ error, saving, onCancel, onSave }: Props) {
     <aside className="panel" aria-labelledby="task-form-title">
       <div className="panel-header">
         <h2 id="task-form-title">Neue Aufgabe</h2>
-        <button className="icon-button" type="button" onClick={onCancel} aria-label="Bearbeitung schließen">×</button>
+        <button className="icon-button" type="button" disabled={saving} onClick={onCancel} aria-label="Bearbeitung schließen">×</button>
       </div>
       <form id="task-form" className="panel-body" onSubmit={submit} noValidate>
         {error && <div className="banner" role="alert"><strong>Konnte nicht speichern.</strong><span>{error}</span><span>Deine Eingaben sind noch da.</span></div>}
@@ -37,6 +37,7 @@ export function TaskForm({ error, saving, onCancel, onSave }: Props) {
         <input
           id="task-title"
           autoFocus
+          disabled={saving}
           value={draft.title}
           aria-invalid={titleError}
           aria-describedby={titleError ? "title-error" : undefined}
@@ -47,11 +48,11 @@ export function TaskForm({ error, saving, onCancel, onSave }: Props) {
         />
         {titleError && <p id="title-error" className="error" role="alert">Bitte einen Titel eingeben.</p>}
         <label htmlFor="task-description">Beschreibung <span>(optional)</span></label>
-        <textarea id="task-description" value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} />
+        <textarea id="task-description" disabled={saving} value={draft.description} onChange={(event) => setDraft({ ...draft, description: event.target.value })} />
       </form>
       <div className="panel-footer">
         <button className="button primary" form="task-form" disabled={saving}>{error ? "Erneut versuchen" : saving ? "Speichert…" : "Speichern"}</button>
-        <button className="button" type="button" onClick={onCancel}>Abbrechen</button>
+        <button className="button" type="button" disabled={saving} onClick={onCancel}>Abbrechen</button>
       </div>
     </aside>
   );

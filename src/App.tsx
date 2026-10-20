@@ -52,6 +52,7 @@ export function App() {
   }
 
   async function selectProject(project: Project) {
+    if (saving || project.id === selectedId) return;
     setSelectedId(project.id);
     setTaskForm(false);
     await persist({ ...data, lastProjectId: project.id });
@@ -114,7 +115,7 @@ export function App() {
             <ul>
               {data.projects.filter((project) => !project.archived).map((project) => (
                 <li key={project.id}>
-                  <button className={`project ${project.id === selectedId ? "active" : ""}`} onClick={() => selectProject(project)} aria-current={project.id === selectedId ? "page" : undefined}>
+                  <button className={`project ${project.id === selectedId ? "active" : ""}`} disabled={saving} onClick={() => selectProject(project)} aria-current={project.id === selectedId ? "page" : undefined}>
                     <span aria-hidden="true">□</span><span>{project.name}</span><span className="count">{data.tasks.filter((task) => task.projectId === project.id && !task.archived).length}</span>
                   </button>
                 </li>
@@ -126,7 +127,7 @@ export function App() {
                 <input id="project-name" autoFocus value={projectName} onChange={(event) => setProjectName(event.target.value)} />
                 <div><button className="small primary" disabled={!projectName.trim() || saving}>Anlegen</button><button className="small" type="button" onClick={() => setProjectForm(false)}>Abbrechen</button></div>
               </form>
-            ) : <button className="new-project" onClick={() => { setProjectForm(true); setError(undefined); }}>＋ Neues Projekt</button>}
+            ) : <button className="new-project" disabled={saving} onClick={() => { setProjectForm(true); setError(undefined); }}>＋ Neues Projekt</button>}
           </nav>
           <p className="local">▣ Lokal auf diesem Gerät</p>
         </aside>
@@ -135,15 +136,15 @@ export function App() {
           {selected ? (
             <section className="workspace" aria-labelledby="project-title">
               <p className="eyebrow">□ Projekt</p>
-              <div className="heading"><div><h1 id="project-title">{selected.name}</h1><p>{tasks.length} {tasks.length === 1 ? "Aufgabe" : "Aufgaben"}</p></div><button className="button primary" onClick={() => { setTaskForm(true); setError(undefined); }}>＋ Neue Aufgabe</button></div>
+              <div className="heading"><div><h1 id="project-title">{selected.name}</h1><p>{tasks.length} {tasks.length === 1 ? "Aufgabe" : "Aufgaben"}</p></div><button className="button primary" disabled={saving} onClick={() => { setTaskForm(true); setError(undefined); }}>＋ Neue Aufgabe</button></div>
               {tasks.length ? (
                 <><div className="list-label"><span>Alle Aufgaben</span><span>{tasks.length} {tasks.length === 1 ? "Aufgabe" : "Aufgaben"}</span></div><ul className="task-list">{tasks.map((task) => <li key={task.id}><span className="checkbox" aria-hidden="true" /><div><strong>{task.title}</strong>{task.description && <p>{task.description}</p>}</div><span className="status"><i />Offen</span></li>)}</ul></>
               ) : (
-                <div className="empty-state"><span className="empty-icon" aria-hidden="true">☑</span><h2>Hier beginnt dein Projekt.</h2><p>Eine kleine Aufgabe ist ein guter Anfang.<br />Was möchtest du als Erstes erledigen?</p><button className="button primary" onClick={() => setTaskForm(true)}>＋ Erste Aufgabe anlegen</button></div>
+                <div className="empty-state"><span className="empty-icon" aria-hidden="true">☑</span><h2>Hier beginnt dein Projekt.</h2><p>Eine kleine Aufgabe ist ein guter Anfang.<br />Was möchtest du als Erstes erledigen?</p><button className="button primary" disabled={saving} onClick={() => setTaskForm(true)}>＋ Erste Aufgabe anlegen</button></div>
               )}
             </section>
           ) : (
-            <section className="welcome"><span className="empty-icon" aria-hidden="true">□</span><h1>Deine Projekte</h1><p>Lege dein erstes Projekt an, um zu beginnen.</p><button className="button primary" onClick={() => setProjectForm(true)}>＋ Neues Projekt</button></section>
+            <section className="welcome"><span className="empty-icon" aria-hidden="true">□</span><h1>Deine Projekte</h1><p>Lege dein erstes Projekt an, um zu beginnen.</p><button className="button primary" disabled={saving} onClick={() => setProjectForm(true)}>＋ Neues Projekt</button></section>
           )}
           {taskForm && <TaskForm saving={saving} error={error} onCancel={() => { setTaskForm(false); setError(undefined); }} onSave={createTask} />}
         </main>
