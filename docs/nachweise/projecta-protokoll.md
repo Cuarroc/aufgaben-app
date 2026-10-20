@@ -18,3 +18,4 @@ Each line: UTC time | actor | where (ProjectA / outside) | action | result.
 2026-10-20T19:44Z | Root | outside (codex-worker-home/config.toml) | check_for_update_on_startup = false (key verified in the Codex binary) | done
 2026-10-20T19:45Z | Root via Codex CLI | outside (ProjectA repo, worktree wt-pa-hooks) | PA-HOOKS-1 round 1: BLOCKIERT (needs seam main.rs:549); round 2 dispatched with main.rs assigned and the update dialog added | running
 2026-10-20T19:34:18Z | Elias | chat | retroactive approval: the Codex update 0.162.1 -> 0.163.0 (P5) was okay; keep it logged. The defect stays: ProjectA must never press Enter into a startup dialog | logged
+2026-10-20T19:37:04Z | Root | AgentsRoom (outside ProjectA) | dispatch for REF-APP-1 handed to AgentsRoom agent Stabschef (codex gpt-6.1-sol), msg-0mvh342e5-59cbe1c9; Root keeps acceptance/review-ok/merge | handed over
