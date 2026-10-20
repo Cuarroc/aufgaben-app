@@ -127,6 +127,16 @@ fn load_from_path(path: &Path) -> Result<AppData, String> {
 }
 
 fn save_to_path(path: &Path, data: &AppData) -> Result<(), String> {
+    save_to_path_with(path, data, |file, bytes| {
+        file.write_all(bytes).and_then(|_| file.sync_all())
+    })
+}
+
+fn save_to_path_with(
+    path: &Path,
+    data: &AppData,
+    write_temp: impl FnOnce(&mut File, &[u8]) -> std::io::Result<()>,
+) -> Result<(), String> {
     validate(data)?;
     load_from_path(path)?;
     let parent = path
@@ -147,11 +157,9 @@ fn save_to_path(path: &Path, data: &AppData) -> Result<(), String> {
         .map_err(|error| {
             format!("Die temporäre Datendatei konnte nicht geschrieben werden: {error}")
         })?;
-    file.write_all(&bytes)
-        .and_then(|_| file.sync_all())
-        .map_err(|error| {
-            format!("Die temporäre Datendatei konnte nicht gespeichert werden: {error}")
-        })?;
+    write_temp(&mut file, &bytes).map_err(|error| {
+        format!("Die temporäre Datendatei konnte nicht gespeichert werden: {error}")
+    })?;
     drop(file);
 
     replace(&temp, path, &backup).map_err(|error| {
@@ -356,5 +364,21 @@ mod tests {
         cleanup_temp_after_replace_error(&temp, &std::io::Error::from_raw_os_error(1177));
 
         assert!(temp.exists());
+    }
+
+    #[test]
+    fn failed_first_temp_write_does_not_lock_out_later_saves() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("daten.json");
+
+        let result = save_to_path_with(&path, &sample("Erster Versuch"), |file, _| {
+            file.write_all(b"partial")?;
+            Err(std::io::Error::other("simulated write failure"))
+        });
+
+        assert!(result.is_err());
+        assert_eq!(load_from_path(&path).unwrap(), AppData::default());
+        save_to_path(&path, &sample("Zweiter Versuch")).unwrap();
+        assert_eq!(load_from_path(&path).unwrap(), sample("Zweiter Versuch"));
     }
 }
