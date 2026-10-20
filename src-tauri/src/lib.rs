@@ -105,6 +105,7 @@ fn load_from_path(path: &Path) -> Result<AppData, String> {
 
 fn save_to_path(path: &Path, data: &AppData) -> Result<(), String> {
     validate(data)?;
+    load_from_path(path)?;
     let parent = path
         .parent()
         .ok_or_else(|| "Der Datenordner ist ungültig.".to_string())?;

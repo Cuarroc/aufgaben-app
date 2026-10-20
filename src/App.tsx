@@ -17,6 +17,7 @@ export function App() {
   const [projectName, setProjectName] = useState("");
   const [taskForm, setTaskForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string>();
   const [error, setError] = useState<string>();
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function App() {
           : loaded.projects.find((project) => !project.archived)?.id;
         setSelectedId(restored);
       })
-      .catch((reason) => setError(message(reason)))
+      .catch((reason) => setLoadError(message(reason)))
       .finally(() => setLoading(false));
   }, []);
 
@@ -91,6 +92,17 @@ export function App() {
   }
 
   if (loading) return <main className="loading">Aufgaben werden geladen…</main>;
+
+  if (loadError) return (
+    <div className="app-shell">
+      <header className="titlebar"><span className="brand-icon" aria-hidden="true">✓</span><strong>Aufgaben</strong></header>
+      <main className="welcome blocked-state">
+        <span className="empty-icon" aria-hidden="true">!</span>
+        <h1>Daten konnten nicht geladen werden</h1>
+        <div className="global-error" role="alert"><strong>%APPDATA%\Aufgaben\daten.json</strong><span>{loadError}</span><span>Die Datei wurde nicht verändert. Bitte sichere oder repariere sie, bevor du Aufgaben weiter verwendest.</span></div>
+      </main>
+    </div>
+  );
 
   return (
     <div className="app-shell">

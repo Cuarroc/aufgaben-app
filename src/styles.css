@@ -48,6 +48,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .status i { width: 6px; height: 6px; border-radius: 50%; background: #7c8798; }
 .empty-state, .welcome { min-height: 330px; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px; border: 1px solid var(--line); border-radius: 9px; background: white; text-align: center; }
 .welcome { height: 100%; border: 0; border-radius: 0; background: #f7f7f8; }
+.blocked-state { min-height: calc(100vh - 48px); }
 .empty-icon { width: 56px; height: 56px; display: grid; place-items: center; margin-bottom: 20px; border-radius: 14px; color: #5a76a6; background: #f0f4fc; font-size: 26px; }
 .empty-state h2, .welcome h1 { font-size: 20px; }
 .empty-state p, .welcome p { margin: 10px 0 23px; color: var(--muted); line-height: 22px; }
