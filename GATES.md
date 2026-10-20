@@ -25,5 +25,5 @@ Scope: Eine installierbare Windows-App speichert ein Projekt und eine Aufgabe at
 - [x] G5: Der gebaute Prozess speichert Testprojekt A mit Erste Aufgabe und zeigt beide nach vollständigem Beenden und erneutem Start
   EVIDENCE: EXE gestartet, Testdaten angelegt, PID 102036 nach Fensterschluss nicht mehr vorhanden; Neustart als PID 44772 zeigte Projekt und Aufgabe im Accessibility-Baum und Screenshot.
 
-- [ ] G6: Die beauftragten Änderungen sind lokal auf Branch s1-durchstich committtet, ohne Push oder gh-Aufruf
-  EVIDENCE: pending
+- [x] G6: Die beauftragten Änderungen sind lokal auf Branch s1-durchstich committtet, ohne Push oder gh-Aufruf
+  EVIDENCE: Produktänderungen auf Branch s1-durchstich als c6ec2ec committtet; weder Push noch gh ausgeführt.
