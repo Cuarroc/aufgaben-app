@@ -274,4 +274,15 @@ mod tests {
         assert!(load_from_path(&path).unwrap_err().contains("beschädigt"));
         assert_eq!(fs::read(&path).unwrap(), corrupt);
     }
+
+    #[test]
+    fn corrupt_file_blocks_save_and_preserves_original() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("daten.json");
+        let corrupt = b"{not json";
+        fs::write(&path, corrupt).unwrap();
+
+        assert!(save_to_path(&path, &sample("Neu")).is_err());
+        assert_eq!(fs::read(&path).unwrap(), corrupt);
+    }
 }
