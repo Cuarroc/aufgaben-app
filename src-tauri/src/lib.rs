@@ -132,9 +132,14 @@ fn save_to_path(path: &Path, data: &AppData) -> Result<(), String> {
     drop(file);
 
     replace(&temp, path, &backup).map_err(|error| {
-        let _ = fs::remove_file(&temp);
+        cleanup_temp_after_replace_error(&temp, &error);
         format!("Die Datendatei konnte nicht sicher ersetzt werden: {error}")
     })
+}
+
+fn cleanup_temp_after_replace_error(temp: &Path, error: &std::io::Error) {
+    let _ = error;
+    let _ = fs::remove_file(temp);
 }
 
 #[cfg(windows)]
@@ -285,5 +290,43 @@ mod tests {
 
         assert!(save_to_path(&path, &sample("Neu")).is_err());
         assert_eq!(fs::read(&path).unwrap(), corrupt);
+    }
+
+    #[test]
+    fn missing_primary_with_backup_is_not_a_fresh_install() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("daten.json");
+        fs::write(
+            dir.path().join("daten.bak.json"),
+            serde_json::to_vec(&sample("Backup")).unwrap(),
+        )
+        .unwrap();
+
+        assert!(load_from_path(&path).is_err());
+    }
+
+    #[test]
+    fn missing_primary_with_temp_is_not_a_fresh_install() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("daten.json");
+        fs::write(
+            dir.path().join("daten.json.tmp"),
+            serde_json::to_vec(&sample("Temp")).unwrap(),
+        )
+        .unwrap();
+
+        assert!(load_from_path(&path).is_err());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn replacement_error_1177_preserves_temp() {
+        let dir = tempdir().unwrap();
+        let temp = dir.path().join("daten.json.tmp");
+        fs::write(&temp, b"new data").unwrap();
+
+        cleanup_temp_after_replace_error(&temp, &std::io::Error::from_raw_os_error(1177));
+
+        assert!(temp.exists());
     }
 }
