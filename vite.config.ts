@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   clearScreen: false,
   server: { port: 1420, strictPort: true },
-  envPrefix: ["VITE_", "TAURI_"],
-  build: { target: "chrome105", minify: !process.env.TAURI_DEBUG, sourcemap: !!process.env.TAURI_DEBUG },
+  envPrefix: ["VITE_", "TAURI_ENV_"],
+  build: { target: "chrome105", minify: !process.env.TAURI_ENV_DEBUG, sourcemap: !!process.env.TAURI_ENV_DEBUG },
   test: { environment: "jsdom", setupFiles: "./src/test-setup.ts" },
 });
